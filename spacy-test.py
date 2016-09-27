@@ -18,3 +18,4 @@ def pos_tags(sentence):
 
 a = "Who are you?"
 print(pos_tags(a))
+print(pos_tags("Who you"))
