@@ -48,6 +48,8 @@ inp = ''
 txt = ''
 while run:
     inp = input('Input file: ')
+    if inp == '':
+        inp = 'gatsby.txt'
     if inp.lower() == 'q':
         run = False
         break
