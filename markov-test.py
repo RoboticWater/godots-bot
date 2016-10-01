@@ -3,23 +3,31 @@ import random
 
 
 def markov(text, start, steps):
+    periods = 0
     out = list(start)
-    words = re.sub(r'\n', ' ', text).split(' ')
-    # add_list = []
-    # for i in range(len(words)):
-    #     m = re.search(r'[.,/#!$%\^&*;:{}=\-_`~()"]', words[i])
-    #     if m is not None:
-    #         print(words[i])
-    #         words[i] = re.sub(r'[.,/#!$%\^&*;:{}=\-_`~()"]', '', words[i])
-    #         add_list.append((i + 1, m.group()))
-    # for elem in add_list:
-    #     words.insert(elem[0], elem[1])
-    # print(words[0:100])
+    words = re.sub(r'\n', ' ', text)
+    words = re.sub(r'([.,!?();"])', r' \1 ', words)
+    words = re.sub('\s{2,}', ' ', words)
+    words = [i.lower() for i in words.split(' ') if len(i) > 0]
     gram = start
-    for i in range(steps):
-        out += [next_word(words, gram)]
+    #for i in range(steps):
+    while periods < steps:
+        w = next_word(words, gram)
+        if '.' in w:
+            periods += 1
+        out += [w]
         gram = [out[i - len(start)] for i in range(len(start))]
-    return ' '.join(out)
+    out = ' '.join(out)
+    out = re.sub(r'\s([.,!?();])', r'\1', out)
+    return capitalize(out)
+
+
+def uppercase(matchobj):
+    return matchobj.group(0).upper()
+
+
+def capitalize(s):
+    return re.sub('^([a-z])|[\.|\?|\!]\s*([a-z])|\s+([a-z])(?=\.)', uppercase, s)
 
 
 def next_word(text, gram):
@@ -43,29 +51,31 @@ def find_sublist(l, sl):
         if l[ind:ind+sll] == sl:
             out.append((ind, ind+sll-1))
     return out
-run = True
-inp = ''
-txt = ''
-while run:
-    inp = input('Input file: ')
-    if inp == '':
-        inp = 'gatsby.txt'
-    if inp.lower() == 'q':
-        run = False
-        break
-    else:
-        try:
-            file = open(inp, 'r', encoding="utf8")
-            txt = ''.join([i for i in file])
-            break
-        except FileNotFoundError:
-            print("File not found. Try again or (q)uit.")
-
-
-while run:
-    inp = input('Input starting strings separated by spaces (ex:"He tried") or (q)uit: ')
-    if inp.lower() == 'q':
-        run = False
-        break
-    else:
-        print("--> " + markov(txt, inp.split(' '), 20))
+f = open('gatsby.txt', encoding='utf8')
+print(markov(''.join([line for line in f]), ['he', 'tried', 'to'], 10))
+# run = True
+# inp = ''
+# txt = ''
+# while run:
+#     inp = input('Input file: ')
+#     if inp == '':
+#         inp = 'gatsby.txt'
+#     if inp.lower() == 'q':
+#         run = False
+#         break
+#     else:
+#         try:
+#             file = open(inp, 'r', encoding="utf8")
+#             txt = ''.join([i for i in file])
+#             break
+#         except FileNotFoundError:
+#             print("File not found. Try again or (q)uit.")
+#
+#
+# while run:
+#     inp = input('Input starting strings separated by spaces (ex:"He tried") or (q)uit: ')
+#     if inp.lower() == 'q':
+#         run = False
+#         break
+#     else:
+#         print("--> " + markov(txt, inp.split(' '), 20))
