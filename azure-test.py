@@ -3,7 +3,7 @@ import http.client, urllib.request, urllib.parse, urllib.error, base64, json
 headers = {
     # Request headers
     'Content-Type': 'application/json',
-    'Ocp-Apim-Subscription-Key': 'e58fd4c615d447e1bf626e5d73b9088d',
+    'Ocp-Apim-Subscription-Key': '{Sub-Key}',
 }
 body = {
     "language": "en",
